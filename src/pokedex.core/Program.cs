@@ -1,9 +1,15 @@
 using FastEndpoints;
+using Pokedex.Core.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
+builder.AddJsonServices();
 builder.Services.AddFastEndpoints();
+
+// Dependency Injection
+builder.AddApplicationServices();
+builder.AddInfrastructureServices();
 
 WebApplication app = builder.Build();
 

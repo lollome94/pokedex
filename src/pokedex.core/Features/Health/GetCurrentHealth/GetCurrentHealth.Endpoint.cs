@@ -1,12 +1,11 @@
 using System.Diagnostics;
 using FastEndpoints;
-using Pokedex.Core.Features.Health.GetCurrentHealth;
 
 namespace Pokedex.Core.Features.Health.GetCurrentHealth;
 
 internal sealed class GetCurrentHealthEndpoint(
     ILogger<GetCurrentHealthEndpoint> logger,
-    IWebHostEnvironment environment) 
+    IWebHostEnvironment environment)
     : EndpointWithoutRequest<GetCurrentHealthResponse>
 {
     public override void Configure()
@@ -24,18 +23,18 @@ internal sealed class GetCurrentHealthEndpoint(
     public override async Task HandleAsync(CancellationToken ct)
     {
         var startTime = Stopwatch.StartNew();
-        
+
         // Create detailed health response
         var response = new GetCurrentHealthResponse(
             Status: "healthy",
             Timestamp: DateTime.UtcNow,
             Version: "1.0.0",
             Environment: environment.EnvironmentName);
-        
+
         await Send.OkAsync(response, ct);
-        
+
         logger.LogInformation(
-            "Health check retrieved in {ElapsedMs}ms for environment {Environment}", 
+            "Health check retrieved in {ElapsedMs}ms for environment {Environment}",
             startTime.ElapsedMilliseconds,
             environment.EnvironmentName);
     }

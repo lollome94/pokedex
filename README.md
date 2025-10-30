@@ -1,14 +1,16 @@
 # Pokedex API
 
-The goal of this small application is to create a Pokedex! It returns Pokemon information through REST APIs.
+A modern .NET 9 Pokemon information API built with Vertical Slice Architecture and FastEndpoints. Provides Pokemon data including descriptions, habitats, legendary status, and Yoda-style translations.
 
-This application has two endpoints:
+## API Endpoints
 
-## Endpoints
+### GET /pokemon/{name}
+Retrieves standard Pokemon information including name, description, habitat, and legendary status.
 
-### GET /pokemon/{pokemon name}
-
-This endpoint responds with pokemon name, standard description, habitat, and is_legendary status.
+**Example Request:**
+```bash
+GET /pokemon/mewtwo
+```
 
 **Example Response:**
 ```json
@@ -20,9 +22,13 @@ This endpoint responds with pokemon name, standard description, habitat, and is_
 }
 ```
 
-### GET /pokemon/translated/{pokemon name}
+### GET /pokemon/translated/{name}
+Returns Pokemon information with Yoda-style translated description for a unique twist on the standard data.
 
-This endpoint responds with pokemon name, translated description (Yoda-style), habitat, and is_legendary status.
+**Example Request:**
+```bash
+GET /pokemon/translated/mewtwo
+```
 
 **Example Response:**
 ```json
@@ -35,8 +41,7 @@ This endpoint responds with pokemon name, translated description (Yoda-style), h
 ```
 
 ### GET /health
-
-Health check endpoint that returns API status.
+Health check endpoint that returns API operational status.
 
 **Example Response:**
 ```json
@@ -48,75 +53,82 @@ Health check endpoint that returns API status.
 
 ## Technology Stack
 
-- **.NET 9** - Latest .NET framework
-- **FastEndpoints** - High-performance endpoint framework
-- **Vertical Slice Architecture** - Clean architecture pattern
-- **REPR Pattern** - Request-Endpoint-Response pattern
+- **.NET 9.0** - Latest .NET framework
+- **ASP.NET Core** - Cross-platform web framework
+- **FastEndpoints 7.1.0** - High-performance API endpoints
+- **Vertical Slice Architecture** - Feature-based organization
+- **Docker** - Containerization support
 
-## Docker Setup
+## AI Development Support
+
+This project includes comprehensive **AGENTS.md** instructions specifically designed for AI-powered development:
+
+- **✅ GitHub Copilot Ready** - Complete coding standards and architectural guidance
+- **✅ Clean Architecture Patterns** - Vertical Slice Architecture with REPR pattern implementation
+- **✅ Best Practices Enforcement** - Primary constructors, async patterns, and performance optimization
+- **✅ Code Generation Guidelines** - Step-by-step instructions for creating new features
+- **✅ Quality Standards** - English-first development with consistent naming conventions
+
+*The AGENTS.md file can be used with any AI coding assistant to maintain code quality and architectural consistency.*
+
+## Quick Start
 
 ### Prerequisites
+- **.NET 9.0 SDK**
+- **Docker Desktop** (optional)
 
-- Docker Desktop installed and running
-
-### Quick Start
-
-**Build and run:**
+### Local Development
 ```bash
-docker-compose up --build -d
+# Clone and setup
+git clone <repository-url>
+cd pokedex
+
+# Run the application
+dotnet run --project src/pokedex.core
 ```
+API available at: **https://localhost:5143**
 
-**Stop:**
+### Docker
 ```bash
+# Build and run
+docker-compose up --build -d
+
+# Stop
 docker-compose down
 ```
-
-The API will be available at: **http://localhost:5000**
-
-### Docker Files Explained
-
-- **`Dockerfile`** - Multi-stage build (SDK for build, runtime for production)
-- **`docker-compose.yml`** - Simple service definition with port mapping
-- **`.dockerignore`** - Excludes unnecessary files from build context
+API available at: **http://localhost:5000**
 
 ## Usage Examples
 
-### Test the health endpoint
+**Health Check:**
 ```bash
 curl http://localhost:5000/health
 ```
 
-### Get a Pokemon
+**Get Pokemon:**
 ```bash
-curl http://localhost:5000/pokemon/mewtwo
 curl http://localhost:5000/pokemon/pikachu
+curl http://localhost:5000/pokemon/mewtwo
 ```
 
-### Get a Pokemon with translated description
+**Get Translated Pokemon:**
 ```bash
-curl http://localhost:5000/pokemon/translated/mewtwo
 curl http://localhost:5000/pokemon/translated/pikachu
 ```
 
-## Available Pokemon (Mock Data)
+## Available Pokemon
 
-The API currently returns mock data for these Pokemon:
-- **mewtwo** - Legendary psychic Pokemon
-- **pikachu** - Electric mouse Pokemon  
-- **charizard** - Fire/flying dragon Pokemon
-- **Any other name** - Returns generic Pokemon data
+The API includes mock data for popular Pokemon:
 
-## Project Structure
+**Legendary Pokemon:**
+- **Mewtwo** - Psychic legendary with rare habitat
+- **Articuno** - Ice/Flying legendary found in icy caves
+- **Zapdos** - Electric/Flying legendary from power plants
 
-```
-src/
-  pokedex.core/
-    Features/
-      Health/           # Health check endpoint
-      Pokemon/          # Pokemon-related endpoints
-        GetPokemon/     # Standard Pokemon endpoint
-        GetTranslatedPokemon/  # Translated Pokemon endpoint
-    Program.cs          # Application entry point
-```
+**Standard Pokemon:**
+- **Pikachu** - Electric mouse Pokemon from forests
+- **Charizard** - Fire/Flying dragon from mountain regions  
+- **Gyarados** - Water/Flying serpent from water areas
+- **Alakazam** - Psychic humanoid from urban environments
 
-This project follows **Vertical Slice Architecture** where each feature is self-contained with its own request, response, and endpoint classes.
+*Note: Any Pokemon name not in the database returns a generic response.*

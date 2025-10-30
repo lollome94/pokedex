@@ -1,18 +1,46 @@
 # Pokedex API
 
-A modern .NET 9 Pokemon information API built with Vertical Slice Architecture and FastEndpoints. Provides Pokemon data including descriptions, habitats, legendary status, and Yoda-style translations.
+A modern .NET 9 Pokemon information API built with **Vertical Slice Architecture** and **FastEndpoints**. This project demonstrates high-performance API development with clean architecture principles, mock data services, and comprehensive TDD testing approach.
 
-## API Endpoints
+## What is This?
 
-### GET /pokemon/{name}
-Retrieves standard Pokemon information including name, description, habitat, and legendary status.
+A production-ready Pokemon API that provides:
+- **Pokemon Information** - Name, description, habitat, legendary status
+- **Yoda Translation** - Fun translated descriptions in Yoda-speak style
+- **Health Monitoring** - Service health check endpoint
+- **Mock Data** - Pre-configured Pokemon database for testing
+- **E2E Testing** - Complete k6 test suite for TDD workflow
 
-**Example Request:**
+## Technology Stack
+
+- **.NET 9.0** with ASP.NET Core
+- **FastEndpoints 7.1.0** - High-performance endpoint framework
+- **Vertical Slice Architecture** - Feature-based organization
+- **Docker** - Multi-stage builds for containerization
+- **k6** - Load testing tool for E2E functional tests
+- **xUnit** - Unit testing framework
+
+## AI Development Support
+
+This project includes **AGENTS.md** - comprehensive instructions for AI-powered development:
+- ✅ **GitHub Copilot Ready** - Coding standards and architectural guidance
+- ✅ **Architecture Patterns** - Vertical Slice Architecture with REPR pattern
+- ✅ **Best Practices** - Primary constructors, async patterns, performance optimization
+- ✅ **Code Generation** - Step-by-step feature creation guidelines
+- ✅ **Quality Standards** - English-first development with consistent conventions
+
+*Use AGENTS.md with any AI coding assistant to maintain code quality and architectural consistency.*
+
+## Available Endpoints
+
+### `GET /pokemon/{name}`
+Get standard Pokemon information with description, habitat, and legendary status.
+
+**Example:**
 ```bash
 GET /pokemon/mewtwo
 ```
-
-**Example Response:**
+**Response:**
 ```json
 {
   "name": "mewtwo",
@@ -22,15 +50,14 @@ GET /pokemon/mewtwo
 }
 ```
 
-### GET /pokemon/translated/{name}
-Returns Pokemon information with Yoda-style translated description for a unique twist on the standard data.
+### `GET /pokemon/translated/{name}`
+Get Pokemon info with Yoda-style translated description.
 
-**Example Request:**
+**Example:**
 ```bash
 GET /pokemon/translated/mewtwo
 ```
-
-**Example Response:**
+**Response:**
 ```json
 {
   "name": "mewtwo",
@@ -40,10 +67,10 @@ GET /pokemon/translated/mewtwo
 }
 ```
 
-### GET /health
-Health check endpoint that returns API operational status.
+### `GET /health`
+Health check endpoint for monitoring service status.
 
-**Example Response:**
+**Response:**
 ```json
 {
   "status": "healthy",
@@ -51,84 +78,176 @@ Health check endpoint that returns API operational status.
 }
 ```
 
-## Technology Stack
+## Prerequisites
 
-- **.NET 9.0** - Latest .NET framework
-- **ASP.NET Core** - Cross-platform web framework
-- **FastEndpoints 7.1.0** - High-performance API endpoints
-- **Vertical Slice Architecture** - Feature-based organization
-- **Docker** - Containerization support
+### Local Development
+- **.NET 9.0 SDK** - [Download](https://dotnet.microsoft.com/download/dotnet/9.0)
 
-## AI Development Support
+### E2E Testing & Docker
+- **Docker Desktop** - [Download](https://www.docker.com/products/docker-desktop)
+- **k6** - Load testing tool for functional tests
 
-This project includes comprehensive **AGENTS.md** instructions specifically designed for AI-powered development:
+#### Install k6
 
-- **✅ GitHub Copilot Ready** - Complete coding standards and architectural guidance
-- **✅ Clean Architecture Patterns** - Vertical Slice Architecture with REPR pattern implementation
-- **✅ Best Practices Enforcement** - Primary constructors, async patterns, and performance optimization
-- **✅ Code Generation Guidelines** - Step-by-step instructions for creating new features
-- **✅ Quality Standards** - English-first development with consistent naming conventions
+**Windows:**
+```powershell
+choco install k6        # Chocolatey
+scoop install k6        # Scoop
+```
 
-*The AGENTS.md file can be used with any AI coding assistant to maintain code quality and architectural consistency.*
+**macOS:**
+```bash
+brew install k6
+```
 
-## Quick Start
+**Linux:**
+```bash
+sudo gpg -k
+sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+sudo apt-get update
+sudo apt-get install k6
+```
 
-### Prerequisites
-- **.NET 9.0 SDK**
-- **Docker Desktop** (optional)
+## How to Run
 
 ### Local Development
 ```bash
-# Clone and setup
-git clone <repository-url>
-cd pokedex
-
-# Run the application
 dotnet run --project src/pokedex.core
 ```
-API available at: **https://localhost:5143**
+→ API available at `http://localhost:5143`
 
-### Docker
+### Docker (Production Mode)
 ```bash
-# Build and run
-docker-compose up --build -d
-
-# Stop
-docker-compose down
+docker-compose up --build -d    # Build and start
+docker-compose logs -f          # View logs
+docker-compose down             # Stop
 ```
-API available at: **http://localhost:5000**
+→ API available at `http://localhost:5000`
+
+## E2E Testing (TDD Approach)
+
+Tests run against **Release build** in Docker, verifying functionality (not load).
+
+### Run All Tests
+
+**Windows (PowerShell):**
+```powershell
+.\run-e2e-tests.ps1
+```
+
+**macOS/Linux:**
+```bash
+./run-e2e-tests.sh
+```
+
+### Run Specific Tests
+
+**Windows (PowerShell):**
+```powershell
+.\run-e2e-tests.ps1 -Test health       # Health check only
+.\run-e2e-tests.ps1 -Test pokemon      # Pokemon endpoint
+.\run-e2e-tests.ps1 -Test translated   # Translation endpoint
+```
+
+**macOS/Linux:**
+```bash
+./run-e2e-tests.sh health
+./run-e2e-tests.sh pokemon
+./run-e2e-tests.sh translated
+```
+
+### What Happens
+
+1. ✅ Checks k6 and Docker installation
+2. 🔨 Builds API Docker image (Release mode)
+3. 🚀 Starts container on `http://localhost:5000`
+4. ⏳ Waits for API readiness
+5. 🧪 Runs k6 functional tests
+6. 📊 Shows results
+7. 💡 Leaves container running for inspection
+
+Stop with: `docker-compose down`
+
+### TDD Workflow
+
+- ✅ **Health** - Implemented (tests pass)
+- ❌ **Pokemon** - Not yet implemented (tests fail - RED phase)
+- ❌ **Translation** - Not yet implemented (tests fail - RED phase)
+
+Implement endpoints to turn tests green!
 
 ## Usage Examples
 
-**Health Check:**
+### curl
 ```bash
 curl http://localhost:5000/health
-```
-
-**Get Pokemon:**
-```bash
-curl http://localhost:5000/pokemon/pikachu
 curl http://localhost:5000/pokemon/mewtwo
-```
-
-**Get Translated Pokemon:**
-```bash
 curl http://localhost:5000/pokemon/translated/pikachu
 ```
 
-## Available Pokemon
+### PowerShell
+```powershell
+Invoke-WebRequest -Uri http://localhost:5000/health | Select -ExpandProperty Content
+Invoke-WebRequest -Uri http://localhost:5000/pokemon/mewtwo | Select -ExpandProperty Content
+```
 
-The API includes mock data for popular Pokemon:
+### httpie
+```bash
+http http://localhost:5000/pokemon/mewtwo
+```
 
-**Legendary Pokemon:**
-- **Mewtwo** - Psychic legendary with rare habitat
-- **Articuno** - Ice/Flying legendary found in icy caves
-- **Zapdos** - Electric/Flying legendary from power plants
+## Development Workflow
 
-**Standard Pokemon:**
-- **Pikachu** - Electric mouse Pokemon from forests
-- **Charizard** - Fire/Flying dragon from mountain regions  
-- **Gyarados** - Water/Flying serpent from water areas
-- **Alakazam** - Psychic humanoid from urban environments
+### TDD Cycle
 
-*Note: Any Pokemon name not in the database returns a generic response.*
+**1. RED - Test First**
+```bash
+.\run-e2e-tests.ps1  # See what fails
+```
+
+**2. GREEN - Implement**
+```bash
+dotnet run --project src/pokedex.core  # Develop with hot reload
+# Create endpoint in Features/ following Vertical Slice Architecture
+```
+
+**3. GREEN - Verify**
+```bash
+.\run-e2e-tests.ps1 -Test pokemon  # Tests pass
+```
+
+**4. REFACTOR - Improve**
+```bash
+dotnet test              # Unit tests
+.\run-e2e-tests.ps1      # Full E2E suite
+```
+
+## Mock Data
+
+The API includes pre-configured Pokemon data:
+
+**Legendary:** Mewtwo, Articuno, Zapdos  
+**Standard:** Pikachu, Charizard, Gyarados, Alakazam
+
+*Unknown Pokemon names will return appropriate error responses.*
+
+## Troubleshooting
+
+**k6 not found:** Install k6 (see Prerequisites)  
+**Docker not running:** Start Docker Desktop  
+**API failed to start:** `docker-compose logs` then `docker-compose down -v`  
+**PowerShell policy error:** `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser`  
+**Port in use:** Kill process on port 5143 (local) or 5000 (Docker)  
+**.NET 9 not found:** Install .NET 9 SDK
+
+## Architecture
+
+This project follows:
+- **Vertical Slice Architecture** - Feature-based organization
+- **REPR Pattern** - Request → Endpoint → Response
+- **FastEndpoints** - High-performance endpoints
+- **TDD Approach** - Test-first development
+- **English-first** - All code and documentation in English
+
+See **[AGENTS.md](AGENTS.md)** for complete coding standards, architecture guidelines, and project structure.

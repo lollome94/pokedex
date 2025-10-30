@@ -197,6 +197,61 @@ Invoke-WebRequest -Uri http://localhost:5000/pokemon/mewtwo | Select -ExpandProp
 http http://localhost:5000/pokemon/mewtwo
 ```
 
+## Testing with HTTP Files (VS Code)
+
+Each endpoint includes an `.http` file for quick testing directly in VS Code.
+
+### Setup
+
+**1. Install REST Client Extension**
+
+The workspace includes a recommended extension. When you open the project:
+- VS Code will prompt: *"Do you want to install the recommended extensions?"*
+- Click **Install All** or manually install **REST Client** by Huachao Mao
+
+Alternatively, install manually:
+1. Open Extensions (`Ctrl+Shift+X`)
+2. Search for **"REST Client"**
+3. Install the extension by **Huachao Mao**
+
+**2. Select Environment**
+
+HTTP files use shared variables (like `{{host}}`). To use them:
+1. Open any `.http` file (e.g., `Features/Health/GetCurrentHealth/GetCurrentHealth.http`)
+2. Look at the **bottom-right corner** of VS Code
+3. Click on **"No Environment"** 
+4. Select your environment: `Development`, `Production`, or `Docker`
+
+### Available HTTP Files
+
+Each feature includes test files in its folder:
+- `Features/Health/GetCurrentHealth/GetCurrentHealth.http`
+- `Features/Pokemon/GetPokemon/GetPokemon.http` *(when implemented)*
+- `Features/Pokemon/GetTranslatedPokemon/GetTranslatedPokemon.http` *(when implemented)*
+
+### How to Use
+
+1. **Open** the `.http` file
+2. **Select environment** (bottom-right corner)
+3. **Click** "Send Request" above the HTTP request
+4. **View** the response in the right panel
+
+**Example:**
+```http
+### Get Current Health Status
+GET {{host}}/api/health
+Accept: application/json
+```
+
+### Environment Variables
+
+The `{{host}}` variable automatically resolves based on selected environment:
+- **Development**: `http://localhost:5143`
+- **Docker**: `http://localhost:5000`
+- **Production**: Your production URL
+
+*Tip: You can customize environments by editing `http-client.env.json` in the project root.*
+
 ## Development Workflow
 
 ### TDD Cycle

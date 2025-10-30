@@ -1,0 +1,5 @@
+### Get Current Health Status
+GET {{host}}/api/health
+Accept: application/json
+
+###

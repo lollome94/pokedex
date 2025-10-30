@@ -206,34 +206,34 @@ internal sealed class GetEntityEndpoint(
     
     public override async Task HandleAsync(
         GetEntityRequest request, 
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var startTime = Stopwatch.StartNew();
         
         // Validate input parameters
         if (string.IsNullOrWhiteSpace(request.Name))
         {
-            await SendErrorsAsync(cancellation: cancellationToken);
+            await Send.ErrorsAsync(cancellation: ct);
             return;
         }
         
         // Retrieve data from service
-        var entity = await entityService.GetByNameAsync(request.Name, cancellationToken);
+        var entity = await entityService.GetByNameAsync(request.Name, ct);
         
         if (entity == null)
         {
-            await SendNotFoundAsync(cancellationToken);
+            await Send.NotFoundAsync(ct);
             return;
         }
         
         // Return formatted response
-        await SendOkAsync(new GetEntityResponse(
+        await Send.OkAsync(new GetEntityResponse(
             entity.Name,
             entity.Description,
             entity.Category,
             entity.IsActive,
             entity.LastUpdated
-        ), cancellationToken);
+        ), ct);
         
         logger.LogInformation("Entity {EntityName} retrieved in {ElapsedMs}ms", 
             request.Name, startTime.ElapsedMilliseconds);

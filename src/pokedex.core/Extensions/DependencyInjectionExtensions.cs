@@ -4,6 +4,8 @@ using Pokedex.Core.Infrastructure;
 using Pokedex.Core.Infrastructure.Options;
 using Pokedex.Core.Infrastructure.Providers;
 using Pokedex.Core.Infrastructure.Providers.Interfaces;
+using Pokedex.Core.Services;
+using Pokedex.Core.Services.Interfaces;
 
 namespace Pokedex.Core.Extensions;
 
@@ -59,6 +61,9 @@ internal static class DependencyInjectionExtensions
     /// </summary>
     public static WebApplicationBuilder AddApplicationServices(this WebApplicationBuilder builder)
     {
+        // Register business services
+        builder.Services.AddScoped<IPokemonService, PokemonService>();
+
         return builder;
     }
 }

@@ -1,5 +1,5 @@
 using FastEndpoints;
-using Pokedex.Core.Infrastructure.Providers.Interfaces;
+using Pokedex.Core.Services.Interfaces;
 
 namespace Pokedex.Core.Features.Pokemon.GetPokemon;
 
@@ -7,7 +7,7 @@ namespace Pokedex.Core.Features.Pokemon.GetPokemon;
 /// Endpoint to retrieve Pokemon information by name
 /// </summary>
 internal sealed class GetPokemonEndpoint(
-    IPokemonProvider pokemonProvider,
+    IPokemonService pokemonService,
     ILogger<GetPokemonEndpoint> logger)
     : EndpointWithoutRequest<GetPokemonResponse>
 {
@@ -37,44 +37,26 @@ internal sealed class GetPokemonEndpoint(
             return;
         }
 
-        // Fetch Pokemon data from provider
-        PokeApiNet.Pokemon? pokemon = await pokemonProvider.GetPokemonByNameAsync(pokemonName, ct);
+        // Get Pokemon data from business service
+        PokemonData? pokemonData = await pokemonService.GetPokemonDataAsync(pokemonName, ct);
 
-        if (pokemon is null)
+        if (pokemonData is null)
         {
             await Send.NotFoundAsync(ct);
             return;
         }
-
-        // Fetch Pokemon species to get description and additional details
-        PokeApiNet.PokemonSpecies? species = await pokemonProvider.GetPokemonSpeciesByIdAsync(pokemon.Id, ct);
-
-        if (species is null)
-        {
-            await Send.NotFoundAsync(ct);
-            return;
-        }
-
-        // Extract English description from flavor text entries
-        string description = species.FlavorTextEntries
-            .FirstOrDefault(entry => entry.Language.Name == "en")?
-            .FlavorText
-            .Replace("\n", " ", StringComparison.Ordinal)
-            .Replace("\f", " ", StringComparison.Ordinal)
-            .Replace("\r", " ", StringComparison.Ordinal)
-            ?? "No description available";
 
         // Map to response model
         GetPokemonResponse response = new(
-            Name: pokemon.Name,
-            Description: description,
-            Habitat: species.Habitat?.Name ?? "unknown",
-            IsLegendary: species.IsLegendary
+            Name: pokemonData.Name,
+            Description: pokemonData.Description,
+            Habitat: pokemonData.Habitat,
+            IsLegendary: pokemonData.IsLegendary
         );
 
         logger.LogInformation(
-            "Successfully retrieved Pokemon: {PokemonName} with species data",
-            pokemon.Name);
+            "Successfully retrieved Pokemon: {PokemonName}",
+            pokemonData.Name);
 
         await Send.OkAsync(response, ct);
     }

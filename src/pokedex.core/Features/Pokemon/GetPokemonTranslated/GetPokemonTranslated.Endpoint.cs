@@ -1,5 +1,6 @@
 using FastEndpoints;
 using Pokedex.Core.Infrastructure.Providers.Interfaces;
+using Pokedex.Core.Services.Interfaces;
 
 namespace Pokedex.Core.Features.Pokemon.GetPokemonTranslated;
 
@@ -9,7 +10,7 @@ namespace Pokedex.Core.Features.Pokemon.GetPokemonTranslated;
 /// Uses dedicated translation providers following Single Responsibility Principle
 /// </summary>
 internal sealed class GetPokemonTranslatedEndpoint(
-    IPokemonProvider pokemonProvider,
+    IPokemonService pokemonService,
     IShakespeareTranslationProvider shakespeareTranslationProvider,
     IYodaTranslationProvider yodaTranslationProvider,
     ILogger<GetPokemonTranslatedEndpoint> logger)
@@ -41,51 +42,33 @@ internal sealed class GetPokemonTranslatedEndpoint(
             return;
         }
 
-        // Fetch Pokemon data from provider
-        PokeApiNet.Pokemon? pokemon = await pokemonProvider.GetPokemonByNameAsync(pokemonName, ct);
+        // Get Pokemon data from business service
+        PokemonData? pokemonData = await pokemonService.GetPokemonDataAsync(pokemonName, ct);
 
-        if (pokemon is null)
+        if (pokemonData is null)
         {
             await Send.NotFoundAsync(ct);
             return;
         }
 
-        // Fetch Pokemon species to get description and additional details
-        PokeApiNet.PokemonSpecies? species = await pokemonProvider.GetPokemonSpeciesByIdAsync(pokemon.Id, ct);
-
-        if (species is null)
-        {
-            await Send.NotFoundAsync(ct);
-            return;
-        }
-
-        // Extract English description from flavor text entries
-        string originalDescription = species.FlavorTextEntries
-            .FirstOrDefault(entry => entry.Language.Name == "en")?
-            .FlavorText
-            .Replace("\n", " ", StringComparison.Ordinal)
-            .Replace("\f", " ", StringComparison.Ordinal)
-            .Replace("\r", " ", StringComparison.Ordinal)
-            ?? "No description available";
-
-        // Determine which translation to use based on habitat and legendary status
+        // Apply translation based on Pokemon characteristics
         string translatedDescription = await GetTranslatedDescriptionAsync(
-            originalDescription,
-            species.Habitat?.Name,
-            species.IsLegendary,
+            pokemonData.Description,
+            pokemonData.Habitat,
+            pokemonData.IsLegendary,
             ct);
 
         // Map to response model
         GetPokemonTranslatedResponse response = new(
-            Name: pokemon.Name,
+            Name: pokemonData.Name,
             Description: translatedDescription,
-            Habitat: species.Habitat?.Name ?? "unknown",
-            IsLegendary: species.IsLegendary
+            Habitat: pokemonData.Habitat,
+            IsLegendary: pokemonData.IsLegendary
         );
 
         logger.LogInformation(
-            "Successfully retrieved translated Pokemon: {PokemonName} with species data",
-            pokemon.Name);
+            "Successfully retrieved translated Pokemon: {PokemonName}",
+            pokemonData.Name);
 
         await Send.OkAsync(response, ct);
     }

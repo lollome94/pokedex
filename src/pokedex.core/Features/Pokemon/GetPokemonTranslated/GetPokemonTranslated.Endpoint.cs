@@ -44,33 +44,44 @@ internal sealed class GetPokemonTranslatedEndpoint(
             return;
         }
 
-        // Get Pokemon data from business service
-        PokemonData? pokemonData = await pokemonService.GetPokemonDataAsync(pokemonName, ct);
-
-        if (pokemonData is null)
+        try
         {
-            await Send.NotFoundAsync(ct);
-            return;
+            // Get Pokemon data from business service
+            // Exceptions will be handled appropriately below or by FastEndpoints exception handler
+            PokemonData? pokemonData = await pokemonService.GetPokemonDataAsync(pokemonName, ct);
+
+            if (pokemonData is null)
+            {
+                // Defensive check - should not happen since service throws exceptions
+                await Send.NotFoundAsync(ct);
+                return;
+            }
+
+            // Apply translation based on Pokemon characteristics
+            string translatedDescription = await GetTranslatedDescriptionAsync(
+                pokemonData.Description,
+                pokemonData.Habitat,
+                pokemonData.IsLegendary,
+                ct);
+
+            // Map to response model using Mapster
+            GetPokemonTranslatedResponse response = mapper.Map<GetPokemonTranslatedResponse>(pokemonData);
+
+            // Update translated description (Mapster mapped the original, we override with translated)
+            response = response with { Description = translatedDescription };
+
+            logger.LogInformation(
+                "Successfully retrieved translated Pokemon: {PokemonName}",
+                pokemonData.Name);
+
+            await Send.OkAsync(response, ct);
         }
-
-        // Apply translation based on Pokemon characteristics
-        string translatedDescription = await GetTranslatedDescriptionAsync(
-            pokemonData.Description,
-            pokemonData.Habitat,
-            pokemonData.IsLegendary,
-            ct);
-
-        // Map to response model using Mapster
-        GetPokemonTranslatedResponse response = mapper.Map<GetPokemonTranslatedResponse>(pokemonData);
-        
-        // Update translated description (Mapster mapped the original, we override with translated)
-        response = response with { Description = translatedDescription };
-
-        logger.LogInformation(
-            "Successfully retrieved translated Pokemon: {PokemonName}",
-            pokemonData.Name);
-
-        await Send.OkAsync(response, ct);
+        catch (Common.Exceptions.PokemonNotFoundException)
+        {
+            // Pokemon not found - return 404
+            await Send.NotFoundAsync(ct);
+        }
+        // All other exceptions propagate to FastEndpoints exception handler
     }
 
     /// <summary>

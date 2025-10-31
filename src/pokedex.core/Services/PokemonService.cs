@@ -1,3 +1,4 @@
+using Pokedex.Core.Common.Exceptions;
 using Pokedex.Core.Infrastructure.Providers.Interfaces;
 using Pokedex.Core.Services.Interfaces;
 
@@ -20,20 +21,24 @@ internal sealed class PokemonService(
     /// </summary>
     /// <param name="pokemonName">The name of the Pokemon to retrieve</param>
     /// <param name="cancellationToken">Cancellation token for the async operation</param>
-    /// <returns>Pokemon data with formatted description, or null if not found</returns>
+    /// <returns>Pokemon data with formatted description</returns>
+    /// <exception cref="ArgumentException">Thrown when pokemonName is null or empty</exception>
+    /// <exception cref="PokemonNotFoundException">Thrown when Pokemon or species is not found</exception>
+    /// <exception cref="PokemonDataException">Thrown when data retrieval fails</exception>
     public async Task<PokemonData?> GetPokemonDataAsync(
         string pokemonName,
         CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Retrieving Pokemon data for: {PokemonName}", pokemonName);
 
-        // Fetch Pokemon data from provider
+        // Fetch Pokemon data from provider (throws exceptions on error)
         PokeApiNet.Pokemon? pokemon = await pokemonProvider.GetPokemonByNameAsync(pokemonName, cancellationToken);
 
         if (pokemon is null)
         {
-            logger.LogWarning("Pokemon not found: {PokemonName}", pokemonName);
-            return null;
+            // Should not happen since provider throws exceptions, but handle defensively
+            logger.LogWarning("Pokemon provider returned null for: {PokemonName}", pokemonName);
+            throw new PokemonNotFoundException(pokemonName, true);
         }
 
         // Fetch Pokemon species to get description and additional details
@@ -41,8 +46,11 @@ internal sealed class PokemonService(
 
         if (species is null)
         {
-            logger.LogWarning("Pokemon species not found for Pokemon ID: {PokemonId}", pokemon.Id);
-            return null;
+            // Should not happen since provider throws exceptions, but handle defensively
+            logger.LogWarning("Pokemon species provider returned null for ID: {PokemonId}", pokemon.Id);
+            throw new PokemonDataException(
+                pokemon.Id.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                "Failed to retrieve species data");
         }
 
         // Extract and format English description

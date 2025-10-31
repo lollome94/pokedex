@@ -1,6 +1,9 @@
+using Mapster;
+using MapsterMapper;
 using Microsoft.Extensions.Options;
 using PokeApiNet;
 using Pokedex.Core.Infrastructure;
+using Pokedex.Core.Infrastructure.Mapping;
 using Pokedex.Core.Infrastructure.Options;
 using Pokedex.Core.Infrastructure.Providers;
 using Pokedex.Core.Infrastructure.Providers.Interfaces;
@@ -61,6 +64,13 @@ internal static class DependencyInjectionExtensions
     /// </summary>
     public static WebApplicationBuilder AddApplicationServices(this WebApplicationBuilder builder)
     {
+        // Register Mapster for object mapping
+        TypeAdapterConfig config = new();
+        MappingConfiguration.RegisterMappings();
+        config.Scan(typeof(Program).Assembly);
+        builder.Services.AddSingleton(config);
+        builder.Services.AddScoped<IMapper, ServiceMapper>();
+
         // Register business services
         builder.Services.AddScoped<IPokemonService, PokemonService>();
 

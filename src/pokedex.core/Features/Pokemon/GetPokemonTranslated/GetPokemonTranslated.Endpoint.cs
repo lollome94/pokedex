@@ -8,11 +8,13 @@ namespace Pokedex.Core.Features.Pokemon.GetPokemonTranslated;
 /// Endpoint to retrieve Pokemon information with translated description
 /// Applies Yoda translation for cave habitat or legendary Pokemon, Shakespeare translation otherwise
 /// Uses dedicated translation providers following Single Responsibility Principle
+/// Uses Mapster for automatic object mapping
 /// </summary>
 internal sealed class GetPokemonTranslatedEndpoint(
     IPokemonService pokemonService,
     IShakespeareTranslationProvider shakespeareTranslationProvider,
     IYodaTranslationProvider yodaTranslationProvider,
+    MapsterMapper.IMapper mapper,
     ILogger<GetPokemonTranslatedEndpoint> logger)
     : EndpointWithoutRequest<GetPokemonTranslatedResponse>
 {
@@ -58,13 +60,11 @@ internal sealed class GetPokemonTranslatedEndpoint(
             pokemonData.IsLegendary,
             ct);
 
-        // Map to response model
-        GetPokemonTranslatedResponse response = new(
-            Name: pokemonData.Name,
-            Description: translatedDescription,
-            Habitat: pokemonData.Habitat,
-            IsLegendary: pokemonData.IsLegendary
-        );
+        // Map to response model using Mapster
+        GetPokemonTranslatedResponse response = mapper.Map<GetPokemonTranslatedResponse>(pokemonData);
+        
+        // Update translated description (Mapster mapped the original, we override with translated)
+        response = response with { Description = translatedDescription };
 
         logger.LogInformation(
             "Successfully retrieved translated Pokemon: {PokemonName}",

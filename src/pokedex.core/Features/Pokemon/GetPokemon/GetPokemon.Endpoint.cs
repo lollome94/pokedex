@@ -5,9 +5,11 @@ namespace Pokedex.Core.Features.Pokemon.GetPokemon;
 
 /// <summary>
 /// Endpoint to retrieve Pokemon information by name
+/// Uses Mapster for automatic object mapping
 /// </summary>
 internal sealed class GetPokemonEndpoint(
     IPokemonService pokemonService,
+    MapsterMapper.IMapper mapper,
     ILogger<GetPokemonEndpoint> logger)
     : EndpointWithoutRequest<GetPokemonResponse>
 {
@@ -46,13 +48,8 @@ internal sealed class GetPokemonEndpoint(
             return;
         }
 
-        // Map to response model
-        GetPokemonResponse response = new(
-            Name: pokemonData.Name,
-            Description: pokemonData.Description,
-            Habitat: pokemonData.Habitat,
-            IsLegendary: pokemonData.IsLegendary
-        );
+        // Map to response model using Mapster
+        GetPokemonResponse response = mapper.Map<GetPokemonResponse>(pokemonData);
 
         logger.LogInformation(
             "Successfully retrieved Pokemon: {PokemonName}",

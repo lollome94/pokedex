@@ -337,24 +337,39 @@ dotnet run --project src/pokedex.core  # Develop with hot reload
 - Implement cache invalidation strategy
 ```
 
-**2. Rate Limiting**
+**2. Resilience & Retry Policies**
+```csharp
+// HTTP call resilience with Polly
+- Retry policies with exponential backoff for transient failures (network timeouts, 5xx errors)
+- Circuit breaker for external APIs (open circuit after N failures)
+- Retry only for idempotent operations (GET requests)
+- Different retry strategies based on error type:
+  * 429 (Rate Limit): Exponential backoff with jitter
+  * 5xx (Server Error): Retry 3 times with 2s, 4s, 8s delays
+  * Timeout: Retry 2 times with shorter timeout
+  * 4xx (Client Error): No retry, fail fast
+```
+
+**3. Rate Limiting**
 ```csharp
 // Protect against API abuse
 - Implement rate limiting per IP/API key
-- Circuit breaker for external APIs (Polly)
-- Retry policies with exponential backoff
+- Token bucket algorithm for smooth rate limiting
+- Different tiers based on subscription level
 ```
 
-**3. Observability**
+**4. Observability & Distributed Tracing**
 ```csharp
-// Production-grade monitoring
-- Prometheus metrics export
-- Grafana dashboards
-- OpenTelemetry distributed tracing
-- Application Insights integration
+// Production-grade monitoring and tracing
+- OpenTelemetry for distributed tracing (trace requests across services)
+- Correlate logs, metrics, and traces with trace IDs
+- Prometheus metrics export (request count, duration, error rate)
+- Grafana dashboards for visualization
+- Application Insights integration for Azure deployments
+- Trace external API calls (PokeAPI, FunTranslations) with proper context
 ```
 
-**4. Testing Pyramid**
+**5. Testing Pyramid**
 ```csharp
 // Current: E2E tests only
 // Production needs:
@@ -364,14 +379,14 @@ dotnet run --project src/pokedex.core  # Develop with hot reload
 - Performance tests (k6 load tests for scalability validation)
 ```
 
-**5. API Versioning**
+**6. API Versioning**
 ```csharp
 // Support multiple API versions
 - URL-based versioning (/v1/pokemon, /v2/pokemon)
 - Graceful deprecation strategy
 ```
 
-**6. Authentication & Authorization**
+**7. Authentication & Authorization**
 ```csharp
 // Secure API access
 - API key authentication
@@ -379,14 +394,14 @@ dotnet run --project src/pokedex.core  # Develop with hot reload
 - Rate limit tiers based on subscription level
 ```
 
-**7. Data Validation**
+**8. Data Validation**
 ```csharp
 // FluentValidation for complex scenarios
 // Current: Simple parameter validation sufficient
 // Future: Complex request models with business rules
 ```
 
-**8. Performance Optimization**
+**9. Performance Optimization**
 ```csharp
 // Benchmark project for performance analysis
 - BenchmarkDotNet for micro-benchmarks
@@ -394,13 +409,29 @@ dotnet run --project src/pokedex.core  # Develop with hot reload
 - Memory allocation profiling
 ```
 
+**10. CI/CD Pipeline**
+```csharp
+// Automated deployment
+- GitHub Actions for CI/CD
+- Automated testing on PR
+- Docker image publishing
+```
+
+**11. API Documentation**
+```csharp
+// Swagger/OpenAPI
+- Auto-generated API documentation
+- Interactive API explorer
+- Request/response examples
+```
 
 ### Why These Decisions?
 
 **Caching** - PokeAPI data is static; caching reduces latency and external dependencies  
+**Retry Policies** - Transient failures are common in distributed systems; smart retries improve reliability  
 **Rate Limiting** - Protects against abuse and manages FunTranslations API limits  
+**OpenTelemetry** - Essential for debugging distributed systems; traces requests across services  
 **Testing Pyramid** - E2E validates behavior; unit tests enable fast iteration  
-**Observability** - Critical for debugging distributed systems at scale  
 **Circuit Breaker** - Prevents cascade failures when external APIs are down
 
 ### Known Limitations

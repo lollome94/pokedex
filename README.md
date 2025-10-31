@@ -92,7 +92,9 @@ Health check endpoint for monitoring service status.
 ```json
 {
   "status": "healthy",
-  "timestamp": "2025-10-30T21:01:49.1113109Z"
+  "timestamp": "2025-10-31T08:29:57.2705319Z",
+  "version": "1.0.0",
+  "environment": "Production"
 }
 ```
 

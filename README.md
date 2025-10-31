@@ -1,15 +1,15 @@
 # Pokedex API
 
-A modern .NET 9 Pokemon information API built with **Vertical Slice Architecture** and **FastEndpoints**. This project demonstrates high-performance API development with clean architecture principles, mock data services, and comprehensive TDD testing approach.
+A modern .NET 9 Pokemon information API built with **Vertical Slice Architecture** and **FastEndpoints**. This project demonstrates high-performance API development with clean architecture principles, external API integration, and comprehensive E2E testing approach.
 
 ## What is This?
 
 A production-ready Pokemon API that provides:
-- **Pokemon Information** - Name, description, habitat, legendary status
-- **Yoda Translation** - Fun translated descriptions in Yoda-speak style
+- **Pokemon Information** - Name, description, habitat, legendary status from PokeAPI
+- **Fun Translations** - Shakespeare and Yoda-style descriptions via FunTranslations API
+- **Smart Translation Rules** - Yoda for cave/legendary Pokemon, Shakespeare for others
 - **Health Monitoring** - Service health check endpoint
-- **Mock Data** - Pre-configured Pokemon database for testing
-- **E2E Testing** - Complete k6 test suite for TDD workflow
+- **E2E Testing** - Complete k6 test suite for functional validation
 
 ## Technology Stack
 
@@ -50,9 +50,14 @@ GET /pokemon/mewtwo
 ```
 
 ### `GET /pokemon/translated/{name}`
-Get Pokemon info with Yoda-style translated description.
+Get Pokemon info with fun translated description using Shakespeare or Yoda style.
 
-**Example:**
+**Translation Rules:**
+- **Yoda translation** for Pokemon with cave habitat OR legendary status
+- **Shakespeare translation** for all other Pokemon
+- Falls back to standard description if translation fails
+
+**Example (Legendary - Yoda):**
 ```bash
 GET /pokemon/translated/mewtwo
 ```
@@ -63,6 +68,20 @@ GET /pokemon/translated/mewtwo
   "description": "Created by a scientist after years of horrific gene splicing and dna engineering experiments, it was.",
   "habitat": "rare",
   "isLegendary": true
+}
+```
+
+**Example (Standard - Shakespeare):**
+```bash
+GET /pokemon/translated/pikachu
+```
+**Response:**
+```json
+{
+  "name": "pikachu",
+  "description": "When several of these pokémon gather, their electricity couldst buildeth and cause lightning storms.",
+  "habitat": "forest",
+  "isLegendary": false
 }
 ```
 
@@ -171,10 +190,10 @@ Stop with: `docker-compose down`
 ### TDD Workflow
 
 - ✅ **Health** - Implemented (tests pass)
-- ❌ **Pokemon** - Not yet implemented (tests fail - RED phase)
-- ❌ **Translation** - Not yet implemented (tests fail - RED phase)
+- ✅ **Pokemon** - Implemented (tests pass)
+- ✅ **Translation** - Implemented (tests pass)
 
-Implement endpoints to turn tests green!
+All core functionality is complete and tested!
 
 ## Usage Examples
 
@@ -225,8 +244,8 @@ HTTP files use shared variables (like `{{host}}`). To use them:
 
 Each feature includes test files in its folder:
 - `Features/Health/GetCurrentHealth/GetCurrentHealth.http`
-- `Features/Pokemon/GetPokemon/GetPokemon.http` *(when implemented)*
-- `Features/Pokemon/GetTranslatedPokemon/GetTranslatedPokemon.http` *(when implemented)*
+- `Features/Pokemon/GetPokemon/GetPokemon.http`
+- `Features/Pokemon/GetPokemonTranslated/GetPokemonTranslated.http`
 
 ### How to Use
 

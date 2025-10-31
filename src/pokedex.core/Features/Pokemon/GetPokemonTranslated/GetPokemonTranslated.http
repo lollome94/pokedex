@@ -1,0 +1,23 @@
+### Get translated Pokemon information - Legendary (Yoda translation)
+GET http://localhost:5000/pokemon/translated/mewtwo
+Accept: application/json
+
+###
+
+### Get translated Pokemon information - Cave habitat (Yoda translation)
+GET http://localhost:5000/pokemon/translated/zubat
+Accept: application/json
+
+###
+
+### Get translated Pokemon information - Regular (Shakespeare translation)
+GET http://localhost:5000/pokemon/translated/pikachu
+Accept: application/json
+
+###
+
+### Get translated Pokemon information - Not found
+GET http://localhost:5000/pokemon/translated/notexistingpokemon
+Accept: application/json
+
+###

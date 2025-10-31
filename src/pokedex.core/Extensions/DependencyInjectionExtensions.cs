@@ -1,4 +1,7 @@
+using Microsoft.Extensions.Options;
 using PokeApiNet;
+using Pokedex.Core.Infrastructure;
+using Pokedex.Core.Infrastructure.Options;
 using Pokedex.Core.Infrastructure.Providers;
 using Pokedex.Core.Infrastructure.Providers.Interfaces;
 
@@ -14,8 +17,39 @@ internal static class DependencyInjectionExtensions
         // Register PokeApiClient as a singleton (recommended by library documentation)
         builder.Services.AddSingleton<PokeApiClient>();
 
+        // Register FunTranslations options
+        builder.Services.Configure<FunTranslationsOptions>(
+            builder.Configuration.GetSection(FunTranslationsOptions.SectionName));
+
+        // Register named HttpClients for FunTranslations API with configuration
+        builder.Services.AddHttpClient(HttpClientNames.ShakespeareTranslation, (serviceProvider, client) =>
+        {
+            FunTranslationsOptions options = serviceProvider
+                .GetRequiredService<IOptions<FunTranslationsOptions>>()
+                .Value;
+
+            client.BaseAddress = new Uri(options.ShakespeareApiUrl);
+            client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+
+        builder.Services.AddHttpClient(HttpClientNames.YodaTranslation, (serviceProvider, client) =>
+        {
+            FunTranslationsOptions options = serviceProvider
+                .GetRequiredService<IOptions<FunTranslationsOptions>>()
+                .Value;
+
+            client.BaseAddress = new Uri(options.YodaApiUrl);
+            client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+
         // Register Pokemon provider
         builder.Services.AddScoped<IPokemonProvider, PokemonProvider>();
+
+        // Register Translation providers with Single Responsibility
+        builder.Services.AddScoped<IShakespeareTranslationProvider, ShakespeareTranslationProvider>();
+        builder.Services.AddScoped<IYodaTranslationProvider, YodaTranslationProvider>();
 
         return builder;
     }

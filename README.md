@@ -212,7 +212,7 @@ Invoke-WebRequest -Uri http://localhost:5000/health | Select -ExpandProperty Con
 Invoke-WebRequest -Uri http://localhost:5000/pokemon/mewtwo | Select -ExpandProperty Content
 ```
 
-### httpie
+### http
 ```bash
 http http://localhost:5000/pokemon/mewtwo
 ```

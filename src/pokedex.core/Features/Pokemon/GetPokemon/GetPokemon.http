@@ -9,3 +9,7 @@ Accept: application/json
 ### Get Pokemon - Charizard
 GET {{host}}/pokemon/charizard
 Accept: application/json
+
+### Get Pokemon - Zubat
+GET {{host}}/pokemon/zubat
+Accept: application/json

@@ -315,6 +315,54 @@ The API includes pre-configured Pokemon data:
 **Port in use:** Kill process on port 5143 (local) or 5000 (Docker)  
 **.NET 9 not found:** Install .NET 9 SDK
 
+## 🤖 AI-Powered Test Automation
+
+This project includes **reusable Copilot prompts** for streamlined test management:
+
+### 🧪 Test Runner Prompt
+**File**: [`.github/prompt/test-runner.prompt.md`]
+
+Execute k6 E2E tests with automatic platform detection and optional README updates.
+
+**Usage Examples:**
+```
+@workspace Run E2E tests for pokemon
+@workspace Run all E2E tests
+@workspace Run E2E tests for health and update README with results
+```
+
+**Features:**
+- ✅ Automatic platform detection (Windows/macOS/Linux)
+- ✅ Prerequisites verification (k6, Docker)
+- ✅ Clear test result summaries
+- ✅ Optional README status updates
+- ✅ Comprehensive error handling
+
+### 🛠️ Test Creator Prompt
+**File**: [`.github/test-create.prompt.md`]
+
+Create new k6 E2E tests following established patterns and best practices.
+
+**Usage Examples:**
+```
+@workspace Create E2E test for Pokemon endpoint testing error handling
+@workspace Add test case to pokemon-test for special characters
+@workspace Create comprehensive test suite for health endpoint
+```
+
+**Features:**
+- ✅ Follows project test patterns
+- ✅ Includes happy path + error scenarios
+- ✅ Creates corresponding .http files
+- ✅ Updates documentation automatically
+- ✅ Validates against architecture guidelines
+
+**How to Use:**
+1. Open GitHub Copilot Chat in VS Code
+2. Reference the prompt with `@workspace`
+3. Specify your test requirements
+4. Copilot handles everything: creation, documentation, validation
+
 ## Architecture
 
 This project follows:

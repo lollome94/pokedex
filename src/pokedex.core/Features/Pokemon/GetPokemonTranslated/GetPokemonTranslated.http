@@ -1,23 +1,47 @@
 ### Get translated Pokemon information - Legendary (Yoda translation)
-GET http://localhost:5000/pokemon/translated/mewtwo
+GET {{host}}/pokemon/translated/mewtwo
 Accept: application/json
 
 ###
 
 ### Get translated Pokemon information - Cave habitat (Yoda translation)
-GET http://localhost:5000/pokemon/translated/zubat
+# Expected: Yoda translation because habitat is "cave"
+# Original: "Forms colonies in perpetually dark places. Uses ultrasonic waves to identify and approach targets."
+GET {{host}}/pokemon/translated/zubat
 Accept: application/json
 
 ###
 
 ### Get translated Pokemon information - Regular (Shakespeare translation)
-GET http://localhost:5000/pokemon/translated/pikachu
+GET {{host}}/pokemon/translated/pikachu
 Accept: application/json
 
 ###
 
-### Get translated Pokemon information - Not found
-GET http://localhost:5000/pokemon/translated/notexistingpokemon
+### Get translated Pokemon information - Ditto (Shakespeare translation)
+GET {{host}}/pokemon/translated/ditto
 Accept: application/json
 
 ###
+
+### Get translated Pokemon information - Case insensitivity test
+GET {{host}}/pokemon/translated/ZUBAT
+Accept: application/json
+
+###
+
+### Get translated Pokemon information - Mixed case test
+GET {{host}}/pokemon/translated/MewTwo
+Accept: application/json
+
+###
+
+### Error: Non-existent Pokemon (404)
+GET {{host}}/pokemon/translated/notexistingpokemon
+Accept: application/json
+
+###
+
+### Error: Empty Pokemon name (404)
+GET {{host}}/pokemon/translated/
+Accept: application/json

@@ -19,6 +19,8 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
+// Enable FastEndpoints exception handler for standardized error responses
+app.UseDefaultExceptionHandler();
 app.UseFastEndpoints();
 
 await app.RunAsync();

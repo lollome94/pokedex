@@ -76,7 +76,8 @@ internal sealed class GetPokemonTranslatedEndpoint(
     /// <summary>
     /// Applies appropriate translation based on Pokemon characteristics
     /// Rules: Use Yoda for cave habitat or legendary Pokemon, Shakespeare otherwise
-    /// Falls back to original description if translation fails
+    /// Falls back to original description ONLY if content extraction fails
+    /// Propagates critical errors (rate limits, HTTP errors) to FastEndpoints exception handler
     /// Uses dedicated providers following Single Responsibility Principle
     /// </summary>
     private async Task<string> GetTranslatedDescriptionAsync(
@@ -94,23 +95,29 @@ internal sealed class GetPokemonTranslatedEndpoint(
             habitat ?? "unknown",
             isLegendary);
 
-        // Use the appropriate dedicated translation provider
-        string? translatedText = shouldUseYoda
-            ? await yodaTranslationProvider.TranslateAsync(originalDescription, ct)
-            : await shakespeareTranslationProvider.TranslateAsync(originalDescription, ct);
-
-        // Fallback to original description if translation fails
-        if (string.IsNullOrWhiteSpace(translatedText))
+        try
         {
+            // Use the appropriate dedicated translation provider
+            string? translatedText = shouldUseYoda
+                ? await yodaTranslationProvider.TranslateAsync(originalDescription, ct)
+                : await shakespeareTranslationProvider.TranslateAsync(originalDescription, ct);
+
             logger.LogInformation(
-                "Translation failed or returned empty, using original description");
+                "Successfully applied {TranslationType} translation",
+                shouldUseYoda ? "Yoda" : "Shakespeare");
+
+            return translatedText ?? originalDescription;
+        }
+        catch (Common.Exceptions.TranslationContentException ex)
+        {
+            // Server responded OK but content extraction failed - fallback to original
+            logger.LogWarning(
+                ex,
+                "Could not extract translated content for {TranslationType}, using original description",
+                shouldUseYoda ? "Yoda" : "Shakespeare");
             return originalDescription;
         }
-
-        logger.LogInformation(
-            "Successfully applied {TranslationType} translation",
-            shouldUseYoda ? "Yoda" : "Shakespeare");
-
-        return translatedText;
+        // All other exceptions (TranslationRateLimitException, TranslationException, etc.)
+        // will propagate to FastEndpoints exception handler for proper error responses
     }
 }

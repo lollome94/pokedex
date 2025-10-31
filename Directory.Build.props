@@ -8,6 +8,8 @@
 	<AnalysisMode>All</AnalysisMode>
 	<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
 	<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+	<!-- Suppress CA1515 for public exceptions - exceptions should be public per best practices -->
+	<NoWarn>$(NoWarn);CA1515</NoWarn>
   </PropertyGroup>
   
   <ItemGroup>

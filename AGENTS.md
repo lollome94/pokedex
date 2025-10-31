@@ -8,7 +8,7 @@ This is a .NET 9.0 ASP.NET Core backend application following Vertical Slice Arc
 - **FastEndpoints 7.1.0** for API endpoints
 - **Vertical Slice Architecture** for clean feature organization
 - **Docker** support with multi-stage builds
-- **xUnit** for testing framework
+- **k6** for E2E testing and load testing
 
 ## Architecture Principles
 
@@ -87,7 +87,7 @@ internal sealed record EntityResponse(string Name, string Description, string Ca
 
 ```
 src/
-├── pokedex.core/                        # Main application project
+├── Pokedex.core/                        # Main application project
 │   ├── Common/                          # Shared utility components
 │   │   ├── Behavior/                    # Cross-cutting behaviors
 │   │   └── Middleware/                  # Custom middleware
@@ -125,8 +125,13 @@ src/
 │   ├── appsettings.json                 # Application configuration
 │   └── Properties/
 │       └── launchSettings.json          # Development launch profiles
-├── tests/
-│   └── [project].unit-tests/           # Unit test project
+├── k6/                                  # E2E and load tests
+│   ├── config/                          # Test configuration files
+│   │   └── base.js                      # Base k6 configuration
+│   └── tests/                           # Test scenarios
+│       ├── health-test.js               # Health endpoint tests
+│       ├── pokemon-test.js              # Pokemon endpoint tests
+│       └── full-suite-test.js           # Complete test suite
 ├── Dockerfile                           # Multi-stage Docker build
 ├── docker-compose.yml                   # Container orchestration
 ├── Directory.Build.props                # MSBuild global properties
@@ -335,12 +340,37 @@ internal static class EntityDataService
 - **Hot reload**: Support for development with volume mounts
 - **Health checks**: Implement proper container health checking
 
-## Testing Considerations
-- Use xUnit for unit testing
-- Test endpoint behavior with different input scenarios
-- Verify business logic works correctly
-- Test error scenarios (invalid inputs, etc.)
-- Include integration tests for full endpoint workflows
+## Testing Strategy
+
+### E2E Testing with k6
+- **Test Framework**: k6 for functional and load testing
+- **Test Organization**: Separate test files for each feature/endpoint
+- **Test Execution**: Automated via PowerShell script (`run-e2e-tests.ps1`)
+- **Docker Integration**: Tests run against containerized API
+
+### Test Structure
+```javascript
+// k6/tests/pokemon-test.js example
+import http from 'k6/http';
+import { check } from 'k6';
+
+export default function() {
+  const response = http.get(`${BASE_URL}/pokemon/mewtwo`);
+  
+  check(response, {
+    'status is 200': (r) => r.status === 200,
+    'has correct data': (r) => {
+      const data = JSON.parse(r.body);
+      return data.name === 'mewtwo' && data.isLegendary === true;
+    }
+  });
+}
+```
+
+### Running Tests
+- **Full suite**: `.\run-e2e-tests.ps1` (builds Docker image, runs all tests)
+- **Individual test**: `k6 run k6/tests/pokemon-test.js`
+- **With custom base URL**: Set `BASE_URL` environment variable
 
 ## Critical Requirements Summary ⚠️
 1. **ENGLISH ONLY**: All code, comments, messages, and documentation must be in English
@@ -348,8 +378,9 @@ internal static class EntityDataService
 3. **FastEndpoints**: Use FastEndpoints framework for all API endpoints
 4. **Primary Constructors**: Use modern C# primary constructor syntax
 5. **Record Types**: Use records for all request/response models
-6. **Mock Data**: Keep it simple with static mock data for development
+6. **External API Integration**: Use providers for external API calls (e.g., PokeAPI)
 7. **Async/Await**: All operations should be async with proper cancellation support
 8. **Docker Ready**: Ensure application works properly in containerized environment
+9. **k6 Testing**: All endpoints must have corresponding k6 E2E tests
 
 Always prioritize simplicity, clean code, and English-first standards. The Vertical Slice Architecture ensures each feature is self-contained and easy to understand. Focus on delivering a working API with clean, maintainable code that follows modern .NET practices.

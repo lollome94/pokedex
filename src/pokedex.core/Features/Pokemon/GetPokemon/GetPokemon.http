@@ -1,0 +1,11 @@
+### Get Pokemon - Mewtwo
+GET {{host}}/pokemon/mewtwo
+Accept: application/json
+
+### Get Pokemon by Name
+GET {{host}}/pokemon/pikachu
+Accept: application/json
+
+### Get Pokemon - Charizard
+GET {{host}}/pokemon/charizard
+Accept: application/json

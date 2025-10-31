@@ -18,7 +18,6 @@ A production-ready Pokemon API that provides:
 - **Vertical Slice Architecture** - Feature-based organization
 - **Docker** - Multi-stage builds for containerization
 - **k6** - Load testing tool for E2E functional tests
-- **xUnit** - Unit testing framework
 
 ## AI Development Support
 
@@ -274,7 +273,6 @@ dotnet run --project src/pokedex.core  # Develop with hot reload
 
 **4. REFACTOR - Improve**
 ```bash
-dotnet test              # Unit tests
 .\run-e2e-tests.ps1      # Full E2E suite
 ```
 

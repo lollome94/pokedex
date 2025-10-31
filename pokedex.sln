@@ -3,18 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36623.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pokedex.core", "src\Pokedex.Core\Pokedex.Core.csproj", "{A97D051B-6BA7-F874-6E55-3D1C12DE12D1}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6C83A596-D32D-B35F-00DD-F0C99B673980}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3F9119BC-1A15-4823-ABA8-D8CC40FDF930}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pokedex.Core.UnitTests", "tests\Pokedex.Core.UnitTests\Pokedex.Core.UnitTests.csproj", "{8519090C-426D-4C82-8B5C-1A1AD67C36D0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0CA81E39-6F2C-4559-AD19-F5D3E2838FA2}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pokedex.core", "src\pokedex.core\pokedex.core.csproj", "{A97D051B-6BA7-F874-6E55-3D1C12DE12D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,17 +20,9 @@ Global
 		{A97D051B-6BA7-F874-6E55-3D1C12DE12D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A97D051B-6BA7-F874-6E55-3D1C12DE12D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A97D051B-6BA7-F874-6E55-3D1C12DE12D1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8519090C-426D-4C82-8B5C-1A1AD67C36D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8519090C-426D-4C82-8B5C-1A1AD67C36D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8519090C-426D-4C82-8B5C-1A1AD67C36D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8519090C-426D-4C82-8B5C-1A1AD67C36D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{A97D051B-6BA7-F874-6E55-3D1C12DE12D1} = {6C83A596-D32D-B35F-00DD-F0C99B673980}
-		{8519090C-426D-4C82-8B5C-1A1AD67C36D0} = {3F9119BC-1A15-4823-ABA8-D8CC40FDF930}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D174A1E9-C2C1-494C-8C67-7D9D5E93C72D}

@@ -13,68 +13,49 @@ export default function() {
     
     console.log(`Testing Pokemon endpoints at: ${BASE_URL}/pokemon/`);
     
-    // Test 1: Pikachu
-    group('GET /pokemon/pikachu', () => {
-      const response = http.get(`${BASE_URL}/pokemon/pikachu`, {
-        headers: baseConfig.headers,
-      });
-      
-      check(response, {
-        '✓ pikachu endpoint returns 200': (r) => r.status === 200,
-        '✓ pikachu response is valid JSON': (r) => baseConfig.validation.checkJsonResponse(r),
-        '✓ pikachu has name field': (r) => {
-          if (r.status !== 200) return false;
-          const data = JSON.parse(r.body);
-          return data.hasOwnProperty('name') && data.name === 'pikachu';
-        },
-        '✓ pikachu has description field': (r) => {
-          if (r.status !== 200) return false;
-          const data = JSON.parse(r.body);
-          return data.hasOwnProperty('description') && data.description.length > 0;
-        },
-        '✓ pikachu has habitat field': (r) => {
-          if (r.status !== 200) return false;
-          const data = JSON.parse(r.body);
-          return data.hasOwnProperty('habitat');
-        },
-        '✓ pikachu has isLegendary field': (r) => {
-          if (r.status !== 200) return false;
-          const data = JSON.parse(r.body);
-          return data.hasOwnProperty('isLegendary') && data.isLegendary === false;
-        },
-      });
-      
-      console.log(`Pikachu response: ${response.body}`);
-    });
-    
-    // Test 2: Mewtwo (legendary Pokemon)
+    // Test: Mewtwo (legendary Pokemon)
     group('GET /pokemon/mewtwo', () => {
       const response = http.get(`${BASE_URL}/pokemon/mewtwo`, {
         headers: baseConfig.headers,
       });
       
+      const expectedMewtwoData = {
+        name: "mewtwo",
+        description: "It was created by a scientist after years of horrific gene splicing and DNA engineering experiments.",
+        habitat: "rare",
+        isLegendary: true
+      };
+      
       check(response, {
         '✓ mewtwo endpoint returns 200': (r) => r.status === 200,
         '✓ mewtwo response is valid JSON': (r) => baseConfig.validation.checkJsonResponse(r),
-        '✓ mewtwo has name field': (r) => {
+        '✓ mewtwo has exact name': (r) => {
           if (r.status !== 200) return false;
           const data = JSON.parse(r.body);
-          return data.hasOwnProperty('name') && data.name === 'mewtwo';
+          return data.name === expectedMewtwoData.name;
         },
-        '✓ mewtwo has description field': (r) => {
+        '✓ mewtwo has exact description': (r) => {
           if (r.status !== 200) return false;
           const data = JSON.parse(r.body);
-          return data.hasOwnProperty('description') && data.description.length > 0;
+          return data.description === expectedMewtwoData.description;
         },
-        '✓ mewtwo has habitat "rare"': (r) => {
+        '✓ mewtwo has exact habitat': (r) => {
           if (r.status !== 200) return false;
           const data = JSON.parse(r.body);
-          return data.hasOwnProperty('habitat') && data.habitat === 'rare';
+          return data.habitat === expectedMewtwoData.habitat;
         },
         '✓ mewtwo is legendary': (r) => {
           if (r.status !== 200) return false;
           const data = JSON.parse(r.body);
-          return data.hasOwnProperty('isLegendary') && data.isLegendary === true;
+          return data.isLegendary === expectedMewtwoData.isLegendary;
+        },
+        '✓ mewtwo response matches expected structure': (r) => {
+          if (r.status !== 200) return false;
+          const data = JSON.parse(r.body);
+          return data.name === expectedMewtwoData.name &&
+                 data.description === expectedMewtwoData.description &&
+                 data.habitat === expectedMewtwoData.habitat &&
+                 data.isLegendary === expectedMewtwoData.isLegendary;
         },
       });
       

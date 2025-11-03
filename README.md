@@ -2,6 +2,21 @@
 
 A production-grade .NET 9 Pokemon information REST API built with **Vertical Slice Architecture** and **FastEndpoints**. This project showcases modern software engineering practices, including clean architecture principles, external API integration, comprehensive error handling, and E2E functional testing with k6.
 
+## 📚 AI-Generated Documentation
+
+This project's comprehensive documentation is **automatically generated and maintained** using **Devin AI**. For detailed architecture analysis, code walkthroughs, and design decisions, visit:
+
+🔗 **[DeepWiki Documentation](https://deepwiki.com/lollome94/pokedex/1-overview)**
+
+The documentation provides:
+- ✅ Automatic project structure analysis
+- ✅ Architecture pattern explanations
+- ✅ Code component relationships
+- ✅ Design decision documentation
+- ✅ Always synchronized with codebase changes
+
+*Powered by Devin - Autonomous AI Software Engineer*
+
 ## What is This?
 
 A high-performance Pokemon API that provides:
@@ -140,20 +155,6 @@ brew install k6
 ```bash
 sudo gpg -k
 sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
-echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-sudo apt-get update
-sudo apt-get install k6
-```
-
-## How to Run
-
-### Local Development
-```bash
-dotnet run --project src/pokedex.core
-```
-→ API available at `http://localhost:5143`
-
-### Docker (Production Mode)
 ```bash
 docker-compose up --build -d    # Build and start
 docker-compose logs -f          # View logs
